@@ -4,6 +4,10 @@ import User from 'domain/models/User'
 
 import { BaseEntity } from './BaseEntity'
 
+/**
+ * DBとアプリ間の仲介者としてのクラス
+ * ユーザーテーブルとの関係を定義する
+ */
 const UserEntity = new EntitySchema<User>({
   name: 'User',
   tableName: 'users',

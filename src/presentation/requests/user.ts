@@ -1,5 +1,12 @@
 import { Length, IsEmail, Min, IsString, IsNumber } from 'class-validator'
 
+import User from 'domain/models/User'
+
+/**
+ * リクエストの型を定義する
+ * class-validatorをミドルウェアとして挟むようにして
+ * コントローラーでバリデーションをする
+ */
 export class GetUserRequest {
   @IsNumber()
   id: number
@@ -17,6 +24,11 @@ export class CreateUserRequest {
   @Min(8)
   @IsString()
   password: string
+
+  /** モデルに変換する */
+  static fromViewModel(vm: CreateUserRequest): User {
+    return new User(vm.name, vm.email, vm.password)
+  }
 }
 
 export class UpdateUserRequest {
@@ -31,6 +43,11 @@ export class UpdateUserRequest {
   @Min(8)
   @IsString()
   password: string
+
+  /** モデルに変換する */
+  static fromViewModel(vm: UpdateUserRequest): User {
+    return new User(vm.name, vm.email, vm.password)
+  }
 }
 
 export class DeleteUserRequest {

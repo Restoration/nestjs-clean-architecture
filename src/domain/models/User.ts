@@ -1,16 +1,20 @@
 import { IEntity } from 'domain/common/IEntity'
 
+/**
+ * ユーザードメイン
+ * 実体となるモデル
+ */
 export default class User implements IEntity {
   private _id: number
   private _name: string
   private _email: string
-  private _createdAt?: Date
-  private _updatedAt?: Date
+  private _password: string
 
-  constructor(id: number, name: string, email: string) {
+  constructor(name: string, email: string, password?: string, id?: number) {
     this._id = id
     this._name = name
     this._email = email
+    this._password = password
   }
 
   get id(): number {
@@ -25,13 +29,9 @@ export default class User implements IEntity {
     return this._email
   }
 
-  // get createdAt(): Date {
-  //   return this._createdAt
-  // }
-
-  // get updatedAt(): Date {
-  //   return this._updatedAt
-  // }
+  get password(): string {
+    return this._password
+  }
 
   equals(entity: IEntity) {
     if (!(entity instanceof User)) return false

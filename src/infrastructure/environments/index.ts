@@ -23,9 +23,6 @@ export default () => {
   const port = Number(getEnv('PORT'))
   const baseUrl = String(getEnv('BASE_URL'))
   const appServerUrl = String(getEnv('APP_SERVER_URL'))
-  const publicKey = String(getEnv('JWT_PUBLIC_KEY')).replace(/\\n/g, '\n')
-  const privateKey = String(getEnv('JWT_PRIVATE_KEY')).replace(/\\n/g, '\n')
-
   const corsOrign = String(getEnv('CORS_ORIGIN'))
   const apiEnvironment = String(getEnv('API_ENVIRONMENT'))
 
@@ -35,7 +32,5 @@ export default () => {
     corsOrign,
     baseUrl,
     appServerUrl,
-    publicKey,
-    privateKey,
   }
 }

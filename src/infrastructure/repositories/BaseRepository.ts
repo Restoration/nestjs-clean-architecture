@@ -2,7 +2,6 @@ import {
   ObjectLiteral,
   EntityManager,
   QueryRunner,
-  InsertResult,
   ObjectID,
   FindConditions,
   UpdateResult,
@@ -11,12 +10,13 @@ import {
   FindOneOptions,
   EntitySchema,
   Connection,
+  DeepPartial,
 } from 'typeorm'
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
 
 /**
- * ベースとなるリポジトリ
- * */
+ * ベースとなるリポジトリの実体
+ */
 export class BaseRepository<Entity extends ObjectLiteral> {
   readonly manager: EntityManager
   readonly queryRunner?: QueryRunner
@@ -47,8 +47,14 @@ export class BaseRepository<Entity extends ObjectLiteral> {
     return this.manager.findOne(this.entitySchema as any, optionsOrConditions as any, maybeOptions)
   }
 
-  insert(entity: QueryDeepPartialEntity<Entity> | QueryDeepPartialEntity<Entity>[]): Promise<InsertResult> {
-    return this.manager.insert(this.entitySchema as any, entity)
+  create(): Entity
+
+  create(entityLikeArray: DeepPartial<Entity>[]): Entity[]
+
+  create(entityLike: DeepPartial<Entity>): Entity
+
+  create(plainEntityLikeOrPlainEntityLikes?: DeepPartial<Entity> | DeepPartial<Entity>[]): Entity | Entity[] {
+    return this.manager.create<any>(this.entitySchema as any, plainEntityLikeOrPlainEntityLikes as any)
   }
 
   update(

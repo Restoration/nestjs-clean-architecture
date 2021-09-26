@@ -2,6 +2,11 @@ import { plainToClass, Expose } from 'class-transformer'
 
 import User from 'domain/models/User'
 
+/**
+ * ビューモデル
+ * 使用者に受け渡すためのモデル
+ * これがAPIレスポンスになる
+ */
 export class UserViewModel {
   @Expose()
   id: number

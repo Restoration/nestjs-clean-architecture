@@ -4,6 +4,12 @@ import { UsersUseCase } from 'application/usecases/UsersUseCase'
 import { CreateUserRequest, UpdateUserRequest, DeleteUserRequest, GetUserRequest } from 'presentation/requests/user'
 import { UserViewModel } from 'presentation/view-models/UserViewModel'
 
+/**
+ * ユーザーコントローラー
+ * I/O(Input/Output)の操作をする、入り口であり出口になる
+ * リクエストされたデータを受け取り、アプリケーションに伝える
+ * アプリケーションの返り値として受け取ったデータをビューモデルに変換してAPIレスポンスとして返す
+ */
 @Controller(`api/v1/user`)
 export class UsersController {
   constructor(private readonly useCase: UsersUseCase) {}
@@ -21,20 +27,36 @@ export class UsersController {
     try {
       const users = await this.useCase.getUsers()
       return users.map((user) => UserViewModel.toViewModel(user))
-    } catch {}
+    } catch {
+      throw new Error('予期せぬエラーが発生しました')
+    }
   }
 
-  // @Post('create')
-  // public async createUser(@Body() params: CreateUserRequest): Promise<UserViewModel> {
-  //   try {
-  //     const user = await this.useCase.createUser(params)
-  //     return UserViewModel.toViewModel(user)
-  //   } catch {}
-  // }
+  @Post('create')
+  public async createUser(@Body() params: CreateUserRequest): Promise<UserViewModel> {
+    try {
+      const user = await this.useCase.createUser(CreateUserRequest.fromViewModel(params))
+      return UserViewModel.toViewModel(user)
+    } catch {
+      throw new Error('予期せぬエラーが発生しました')
+    }
+  }
 
-  // @Put('update')
-  // public async updateUser(@Param() params: UpdateUserRequest): Promise<UserViewModel> {}
+  @Put('update')
+  public async updateUser(@Param() params: UpdateUserRequest): Promise<boolean> {
+    try {
+      return await this.useCase.updateUser(UpdateUserRequest.fromViewModel(params))
+    } catch {
+      throw new Error('予期せぬエラーが発生しました')
+    }
+  }
 
-  // @Delete('delete')
-  // public async deleteUser(@Param() params: DeleteUserRequest): Promise<boolean> {}
+  @Delete('delete')
+  public async deleteUser(@Param() params: DeleteUserRequest): Promise<boolean> {
+    try {
+      return await this.useCase.deleteUser(params.id)
+    } catch {
+      throw new Error('予期せぬエラーが発生しました')
+    }
+  }
 }
