@@ -22,6 +22,10 @@ const UserEntity = new EntitySchema<User>({
       type: String,
       length: 100,
     },
+    password: {
+      type: String,
+      length: 255,
+    },
   },
   orderBy: {
     createdAt: 'ASC',
