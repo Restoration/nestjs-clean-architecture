@@ -1,4 +1,5 @@
-import { Length, IsEmail, Min, IsString, IsNumber } from 'class-validator'
+import { Type } from 'class-transformer'
+import { Length, IsEmail, IsString, IsNumber, IsOptional } from 'class-validator'
 
 import User from 'domain/models/User'
 
@@ -7,12 +8,14 @@ import User from 'domain/models/User'
  * class-validatorをミドルウェアとして挟むようにして
  * コントローラーでバリデーションをする
  */
-export class GetUserRequest {
+export class GetUserQuery {
+  @IsOptional()
   @IsNumber()
+  @Type(() => Number)
   id: number
 }
 
-export class CreateUserRequest {
+export class CreateUserParams {
   @Length(10, 20)
   @IsString()
   name: string
@@ -21,36 +24,29 @@ export class CreateUserRequest {
   @IsString()
   email: string
 
-  @Min(8)
+  @Length(8, 24)
   @IsString()
   password: string
 
   /** モデルに変換する */
-  static fromViewModel(vm: CreateUserRequest): User {
+  static fromViewModel(vm: CreateUserParams): User {
     return new User(vm.name, vm.email, vm.password)
   }
 }
 
-export class UpdateUserRequest {
-  @Length(10, 20)
-  @IsString()
-  name: string
-
-  @IsEmail()
-  @IsString()
-  email: string
-
-  @Min(8)
-  @IsString()
-  password: string
-
-  /** モデルに変換する */
-  static fromViewModel(vm: UpdateUserRequest): User {
-    return new User(vm.name, vm.email, vm.password)
-  }
-}
-
-export class DeleteUserRequest {
+export class UpdateUserParams extends CreateUserParams {
   @IsNumber()
+  @Type(() => Number)
+  id: number
+
+  /** モデルに変換する */
+  static fromViewModel(vm: UpdateUserParams): User {
+    return new User(vm.name, vm.email, vm.password, vm.id)
+  }
+}
+
+export class DeleteUserParams {
+  @IsNumber()
+  @Type(() => Number)
   id: number
 }

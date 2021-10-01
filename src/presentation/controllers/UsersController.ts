@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, Query } from '@nestjs/common'
+import { Controller, Get, Post, Put, Delete, Body, Query } from '@nestjs/common'
 
 import { UsersUseCase } from 'application/usecases/UsersUseCase'
-import { CreateUserRequest, UpdateUserRequest, DeleteUserRequest, GetUserRequest } from 'presentation/requests/user'
+import { CreateUserParams, UpdateUserParams, DeleteUserParams, GetUserQuery } from 'presentation/requests/user'
 import { UserViewModel } from 'presentation/view-models/UserViewModel'
 
 /**
@@ -10,21 +10,17 @@ import { UserViewModel } from 'presentation/view-models/UserViewModel'
  * リクエストされたデータを受け取り、アプリケーションに伝える
  * アプリケーションの返り値として受け取ったデータをビューモデルに変換してAPIレスポンスとして返す
  */
-@Controller(`api/v1/user`)
+@Controller(`api/v1/users`)
 export class UsersController {
   constructor(private readonly useCase: UsersUseCase) {}
 
   @Get('/')
-  public async getUser(@Query() query: GetUserRequest): Promise<UserViewModel> {
+  public async getUser(@Query() query: GetUserQuery): Promise<UserViewModel | UserViewModel[]> {
     try {
-      const user = await this.useCase.getUser(query.id)
-      return UserViewModel.toViewModel(user)
-    } catch {}
-  }
-
-  @Get('users')
-  public async getUsers(): Promise<UserViewModel[]> {
-    try {
+      if (query.id) {
+        const user = await this.useCase.getUser(query.id)
+        return UserViewModel.toViewModel(user)
+      }
       const users = await this.useCase.getUsers()
       return users.map((user) => UserViewModel.toViewModel(user))
     } catch {
@@ -33,28 +29,33 @@ export class UsersController {
   }
 
   @Post('create')
-  public async createUser(@Body() params: CreateUserRequest): Promise<UserViewModel> {
+  public async createUser(@Body() params: CreateUserParams): Promise<{ isSuceess: boolean }> {
     try {
-      const user = await this.useCase.createUser(CreateUserRequest.fromViewModel(params))
-      return UserViewModel.toViewModel(user)
+      return {
+        isSuceess: await this.useCase.createUser(CreateUserParams.fromViewModel(params)),
+      }
     } catch {
       throw new Error('予期せぬエラーが発生しました')
     }
   }
 
   @Put('update')
-  public async updateUser(@Param() params: UpdateUserRequest): Promise<boolean> {
+  public async updateUser(@Body() params: UpdateUserParams): Promise<{ isSuceess: boolean }> {
     try {
-      return await this.useCase.updateUser(UpdateUserRequest.fromViewModel(params))
+      return {
+        isSuceess: await this.useCase.updateUser(UpdateUserParams.fromViewModel(params)),
+      }
     } catch {
       throw new Error('予期せぬエラーが発生しました')
     }
   }
 
   @Delete('delete')
-  public async deleteUser(@Param() params: DeleteUserRequest): Promise<boolean> {
+  public async deleteUser(@Query() query: DeleteUserParams): Promise<{ isSuceess: boolean }> {
     try {
-      return await this.useCase.deleteUser(params.id)
+      return {
+        isSuceess: await this.useCase.deleteUser(query.id),
+      }
     } catch {
       throw new Error('予期せぬエラーが発生しました')
     }

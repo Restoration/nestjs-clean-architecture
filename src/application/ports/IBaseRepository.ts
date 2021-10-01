@@ -6,7 +6,7 @@ import {
   FindOneOptions,
   UpdateResult,
   DeleteResult,
-  DeepPartial,
+  InsertResult,
 } from 'typeorm'
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
 
@@ -30,13 +30,7 @@ export abstract class IBaseRepository<Entity> {
     maybeOptions?: FindOneOptions<Entity>,
   ): Promise<Entity | undefined>
 
-  abstract create(): Entity
-
-  abstract create(entityLikeArray: DeepPartial<Entity>[]): Entity[]
-
-  abstract create(entityLike: DeepPartial<Entity>): Entity
-
-  abstract create(plainEntityLikeOrPlainEntityLikes?: DeepPartial<Entity> | DeepPartial<Entity>[]): Entity | Entity[]
+  abstract insert(entity: QueryDeepPartialEntity<Entity> | QueryDeepPartialEntity<Entity>[]): Promise<InsertResult>
 
   abstract update(
     criteria: string | string[] | number | number[] | Date | Date[] | ObjectID | ObjectID[] | FindConditions<Entity>,

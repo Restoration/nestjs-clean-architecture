@@ -10,7 +10,7 @@ import {
   FindOneOptions,
   EntitySchema,
   Connection,
-  DeepPartial,
+  InsertResult,
 } from 'typeorm'
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
 
@@ -47,14 +47,8 @@ export class BaseRepository<Entity extends ObjectLiteral> {
     return this.manager.findOne(this.entitySchema as any, optionsOrConditions as any, maybeOptions)
   }
 
-  create(): Entity
-
-  create(entityLikeArray: DeepPartial<Entity>[]): Entity[]
-
-  create(entityLike: DeepPartial<Entity>): Entity
-
-  create(plainEntityLikeOrPlainEntityLikes?: DeepPartial<Entity> | DeepPartial<Entity>[]): Entity | Entity[] {
-    return this.manager.create<any>(this.entitySchema as any, plainEntityLikeOrPlainEntityLikes as any)
+  insert(entity: QueryDeepPartialEntity<Entity> | QueryDeepPartialEntity<Entity>[]): Promise<InsertResult> {
+    return this.manager.insert(this.entitySchema as any, entity)
   }
 
   update(
