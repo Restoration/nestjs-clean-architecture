@@ -9,6 +9,8 @@ export default class User implements IEntity {
   name: string
   email: string
   password: string
+  createdAt: Date
+  updatedAt: Date
 
   constructor(name: string, email: string, password?: string, id?: number) {
     this.id = id

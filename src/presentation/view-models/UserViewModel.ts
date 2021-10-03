@@ -18,6 +18,9 @@ export class UserViewModel {
   email: string
 
   @Expose()
+  password: string
+
+  @Expose()
   createdAt: Date
 
   @Expose()
