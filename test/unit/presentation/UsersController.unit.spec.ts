@@ -3,7 +3,6 @@ import { UsersController } from 'presentation/controllers/UsersController';
 import { UsersUseCase } from 'application/usecases/UsersUseCase';
 import User from 'domain/models/User';
 import { UserViewModel } from 'presentation/view-models/UserViewModel';
-import { GetUserQuery } from 'presentation/requests/user';
 
 describe('UsersController Test', () => {
   let usersController;
