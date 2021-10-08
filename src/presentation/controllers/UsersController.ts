@@ -17,33 +17,33 @@ export class UsersController {
   @Get('/')
   public async getUser(@Query() query: GetUserQuery): Promise<UserViewModel | UserViewModel[]> {
     try {
-      if (query.id) {
+      if (query?.id) {
         const user = await this.useCase.getUser(query.id)
         return UserViewModel.toViewModel(user)
       }
       const users = await this.useCase.getUsers()
       return users.map((user) => UserViewModel.toViewModel(user))
-    } catch {
+    } catch (e) {
+      console.error(e)
       throw new Error('予期せぬエラーが発生しました')
     }
   }
 
   @Post('create')
-  public async createUser(@Body() params: CreateUserParams): Promise<{ isSuceess: boolean }> {
+  public async createUser(@Body() params: CreateUserParams): Promise<UserViewModel> {
     try {
-      return {
-        isSuceess: await this.useCase.createUser(CreateUserParams.fromViewModel(params)),
-      }
-    } catch {
+      return await this.useCase.createUser(CreateUserParams.fromViewModel(params))
+    } catch (e) {
+      console.error(e)
       throw new Error('予期せぬエラーが発生しました')
     }
   }
 
   @Put('update')
-  public async updateUser(@Body() params: UpdateUserParams): Promise<{ isSuceess: boolean }> {
+  public async updateUser(@Body() params: UpdateUserParams): Promise<{ isSuccess: boolean }> {
     try {
       return {
-        isSuceess: await this.useCase.updateUser(UpdateUserParams.fromViewModel(params)),
+        isSuccess: await this.useCase.updateUser(UpdateUserParams.fromViewModel(params)),
       }
     } catch {
       throw new Error('予期せぬエラーが発生しました')
@@ -51,10 +51,10 @@ export class UsersController {
   }
 
   @Delete('delete')
-  public async deleteUser(@Query() query: DeleteUserParams): Promise<{ isSuceess: boolean }> {
+  public async deleteUser(@Query() query: DeleteUserParams): Promise<{ isSuccess: boolean }> {
     try {
       return {
-        isSuceess: await this.useCase.deleteUser(query.id),
+        isSuccess: await this.useCase.deleteUser(query.id),
       }
     } catch {
       throw new Error('予期せぬエラーが発生しました')

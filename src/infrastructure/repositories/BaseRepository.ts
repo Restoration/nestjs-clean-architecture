@@ -10,7 +10,8 @@ import {
   FindOneOptions,
   EntitySchema,
   Connection,
-  InsertResult,
+  DeepPartial,
+  SaveOptions,
 } from 'typeorm'
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
 
@@ -26,6 +27,16 @@ export class BaseRepository<Entity extends ObjectLiteral> {
     this.queryRunner = connection.createQueryRunner()
     this.manager = this.queryRunner.manager
     this.entitySchema = entity
+  }
+
+  create(): Entity
+
+  create(entityLikeArray: DeepPartial<Entity>[]): Entity[]
+
+  create(entityLike: DeepPartial<Entity>): Entity
+
+  create(plainEntityLikeOrPlainEntityLikes?: DeepPartial<Entity> | DeepPartial<Entity>[]): Entity | Entity[] {
+    return this.manager.create<any>(this.entitySchema as any, plainEntityLikeOrPlainEntityLikes as any)
   }
 
   find(options?: FindManyOptions<Entity>): Promise<Entity[]>
@@ -47,8 +58,16 @@ export class BaseRepository<Entity extends ObjectLiteral> {
     return this.manager.findOne(this.entitySchema as any, optionsOrConditions as any, maybeOptions)
   }
 
-  insert(entity: QueryDeepPartialEntity<Entity> | QueryDeepPartialEntity<Entity>[]): Promise<InsertResult> {
-    return this.manager.insert(this.entitySchema as any, entity)
+  save<T extends DeepPartial<Entity>>(entities: T[], options: SaveOptions & { reload: false }): Promise<T[]>
+
+  save<T extends DeepPartial<Entity>>(entities: T[], options?: SaveOptions): Promise<(T & Entity)[]>
+
+  save<T extends DeepPartial<Entity>>(entity: T, options: SaveOptions & { reload: false }): Promise<T>
+
+  save<T extends DeepPartial<Entity>>(entity: T, options?: SaveOptions): Promise<T & Entity>
+
+  save<T extends DeepPartial<Entity>>(entityOrEntities: T | T[], options?: SaveOptions): Promise<T | T[]> {
+    return this.manager.save<T>(entityOrEntities as any, options)
   }
 
   update(
@@ -62,6 +81,10 @@ export class BaseRepository<Entity extends ObjectLiteral> {
     criteria: string | string[] | number | number[] | Date | Date[] | ObjectID | ObjectID[] | FindConditions<Entity>,
   ): Promise<DeleteResult> {
     return this.manager.delete(this.entitySchema as any, criteria as any)
+  }
+
+  query(query: string, parameters?: any[]): Promise<any> {
+    return this.manager.query(query, parameters)
   }
 
   async transaction<T>(operation: () => Promise<T>): Promise<T> {

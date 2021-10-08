@@ -1,17 +1,15 @@
-import User from 'domain/models/User';
+import User from 'domain/models/User'
 
 describe('ユーザードメインのテスト', () => {
-  let USER_MOCK: User;
-  const USER_OBJECT = { name: 'Test', email: 'test@devark.jp' };
+  let USER_MOCK: User
+  const USER_OBJECT = { name: 'DevArk', email: 'test@devark.jp', password: 'zxcvbnm0', id: 1 }
 
   beforeEach(() => {
-    USER_MOCK = new User('Test', 'test@devark.jp', 'zxcvbnm0', 1);
-  });
+    USER_MOCK = new User('DevArk', 'test@devark.jp', 'zxcvbnm0', 1)
+  })
 
   it('ユーザー作成可能であるか', () => {
-    const user = new User('Test', 'test@devark.jp');
-
-    expect(user instanceof User).toBeTruthy();
-    expect(user).toEqual(USER_OBJECT);
-  });
-});
+    expect(USER_MOCK instanceof User).toBeTruthy()
+    expect(USER_MOCK).toEqual(USER_OBJECT)
+  })
+})

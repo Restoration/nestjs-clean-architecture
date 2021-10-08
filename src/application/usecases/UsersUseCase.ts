@@ -27,9 +27,9 @@ export class UsersUseCase {
    * ユーザー作成
    *
    */
-  public async createUser(params: User): Promise<boolean> {
-    const result = await this.repository.insert(params)
-    return Boolean(result.identifiers.length)
+  public async createUser(params: User): Promise<User> {
+    const user = this.repository.create(params)
+    return await this.repository.save(user)
   }
 
   /**
